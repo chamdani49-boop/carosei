@@ -551,13 +551,17 @@
       <label class="field-label">03 — Mode pemecah slide</label>
       <div class="segmented" id="splitMode">
         <button data-mode="heading" class="active">Per sub-judul</button>
-        <button data-mode="chars">Per jumlah karakter</button>
+        <button data-mode="paragraph">Per paragraf</button>
+        <button data-mode="chars">Per karakter</button>
       </div>
-      <div class="slider-row" style="margin-top:10px;">
-        <input type="range" id="charLimit" min="150" max="700" step="10" value="380">
-        <span class="charcount" id="charLimitVal">380</span>
+      <div id="charLimitWrap">
+        <div class="slider-row" style="margin-top:10px;">
+          <input type="range" id="charLimit" min="150" max="700" step="10" value="380">
+          <span class="charcount" id="charLimitVal">380</span>
+        </div>
+        <div class="hint">Batas karakter jadi jaring pengaman di mode "per sub-judul" & "per karakter" supaya satu slide tidak kepanjangan.</div>
       </div>
-      <div class="hint">Batas karakter ini juga jadi jaring pengaman di mode "per sub-judul", supaya satu slide tidak kepanjangan.</div>
+      <div class="hint" id="paragraphHint" style="display:none;">Mode "per paragraf": tiap paragraf jadi tepat 1 slide, tidak digabung/dipotong. Sub-judul menempel ke paragraf setelahnya.</div>
     </div>
 
     <div>
@@ -764,6 +768,28 @@ function parseInput(raw){
 
 function buildSlides(title, blocks, mode, maxChars){
   const slides = [{type:'cover', heading:title, paragraphs:[]}];
+
+  // Mode "per paragraf": tiap paragraf = tepat 1 slide, tidak digabung/dipotong.
+  if(mode === 'paragraph'){
+    let pendingHeading = '';
+    blocks.forEach(b=>{
+      const isHeading = b.tag === 'h2' || b.tag === 'h3';
+      if(isHeading){
+        // kalau ada sub-judul menggantung tanpa paragraf, jadikan slide judul sendiri
+        if(pendingHeading) slides.push({type:'content', heading:pendingHeading, paragraphs:[]});
+        pendingHeading = b.text;
+        return;
+      }
+      slides.push({type:'content', heading:pendingHeading, paragraphs:[{strong:false, text:b.text}]});
+      pendingHeading = '';
+    });
+    if(pendingHeading) slides.push({type:'content', heading:pendingHeading, paragraphs:[]});
+
+    slides.forEach((s,i)=>{ s.index = i+1; });
+    slides.forEach(s=> s.total = slides.length);
+    return slides;
+  }
+
   let current = null;
 
   function fresh(){ return {type:'content', heading:'', paragraphs:[], chars:0}; }
@@ -1295,6 +1321,9 @@ document.getElementById('splitMode').addEventListener('click', e=>{  if(e.target
   document.querySelectorAll('#splitMode button').forEach(b=>b.classList.remove('active'));
   e.target.classList.add('active');
   state.mode = e.target.dataset.mode;
+  const isPara = state.mode === 'paragraph';
+  document.getElementById('charLimitWrap').style.display = isPara ? 'none' : 'block';
+  document.getElementById('paragraphHint').style.display = isPara ? 'block' : 'none';
 });
 
 document.getElementById('aspectMode').addEventListener('click', e=>{
