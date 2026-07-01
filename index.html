@@ -324,6 +324,8 @@
     justify-content:center;
     gap:.9em;
     overflow:hidden;
+    overflow-wrap:break-word;
+    word-break:break-word;
     position:relative;
     z-index:1;
   }
@@ -819,7 +821,32 @@ function renderStage(){
   });
 
   stage.appendChild(strip);
+  // auto-fit: paksa tiap slide agar teks tidak keluar dari kanvas
+  state.slides.forEach((s, i)=> fitSlide(document.getElementById('slide-' + i)));
   document.getElementById('downloadAllBtn').style.display = 'block';
+}
+
+// Kecilkan ukuran font sebuah slide sampai isinya muat di dalam kanvas.
+function fitSlide(canvas){
+  if(!canvas) return;
+  const body = canvas.querySelector('.slide-body');
+  if(!body) return;
+  // ukur dengan konten rata-atas supaya overflow terdeteksi akurat
+  const prevJustify = body.style.justifyContent;
+  body.style.justifyContent = 'flex-start';
+
+  const w = canvas.clientWidth || 340;
+  let base = w * 0.047;          // ~16px pada slide 340px (rasio konsisten antar-rasio)
+  const min = w * 0.024;         // batas terkecil biar tetap terbaca
+  canvas.style.fontSize = base + 'px';
+
+  let guard = 120;
+  while(body.scrollHeight > body.clientHeight + 0.5 && base > min && guard-- > 0){
+    base -= 0.4;
+    canvas.style.fontSize = base + 'px';
+  }
+
+  body.style.justifyContent = prevJustify || '';
 }
 
 async function captureSlide(canvasEl){
