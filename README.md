@@ -5,11 +5,19 @@ Carousel Reel — alat berbasis browser untuk memecah artikel (HTML atau teks bi
 ## Fitur
 
 - Tempel artikel HTML atau teks biasa, atau unggah file `.html`
-- Pecah slide otomatis per sub-judul atau per jumlah karakter
+- **Dua mode hasil:**
+  - **Teks jadi slide** — mengambil teks artikel dan menatanya ulang pakai template + tema bawaan
+  - **Desain asli** — merender HTML apa adanya (warna, gambar, layout dipertahankan) lalu memotongnya otomatis sesuai rasio slide
+- Pecah slide otomatis per sub-judul atau per jumlah karakter (mode teks)
 - Pilih rasio slide: 1:1, 4:5, atau 9:16 (story)
-- 3 gaya warna: Paper, Ink, Rust
-- **Upload logo** (PNG/JPG/SVG) dengan pengaturan posisi (4 sudut), ukuran, dan pilihan tampil di semua slide atau sampul saja
+- 4 gaya warna: Paper, Ink, Rust, dan **Nebula** (gradient ungu-navy gelap dengan aksen hijau, gaya "terminal")
+- **Upload logo** (PNG/JPG/SVG) dengan pengaturan posisi (4 sudut), ukuran, dan pilihan tampil di semua slide atau sampul saja — bekerja di kedua mode
 - Unduh per slide sebagai PNG 1080px, atau semua sekaligus dalam `.zip`
+
+### Catatan mode "Desain asli"
+
+- File HTML sebaiknya **self-contained**: CSS ditulis inline/di dalam `<style>`, gambar berupa URL online atau ter-embed base64. Gambar yang mengandalkan file lokal terpisah tidak akan muncul.
+- Pemotongan slide dilakukan otomatis dengan tinggi sama rata sesuai rasio, sehingga kadang bisa memotong di tengah elemen. Sesuaikan tinggi konten HTML bila perlu potongan yang lebih presisi.
 
 ## Cara membuka via website (GitHub Pages)
 
