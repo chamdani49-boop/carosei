@@ -10,7 +10,7 @@ Carousel Reel — alat berbasis browser untuk memecah artikel (HTML atau teks bi
   - **Desain asli** — merender HTML apa adanya (warna, gambar, layout dipertahankan) lalu memotongnya otomatis sesuai rasio slide
 - Pecah slide otomatis per sub-judul atau per jumlah karakter (mode teks)
 - Pilih rasio slide: 1:1, 4:5, atau 9:16 (story)
-- 4 gaya warna: Paper, Ink, Rust, dan **Nebula** (gradient ungu-navy gelap dengan aksen hijau, gaya "terminal")
+- 5 gaya warna: Paper, Ink, Rust, **Nebula** (gradient ungu-navy dengan aksen hijau), dan **Grid** (hitam-teal gelap dengan pola grid halus & bingkai kartu, aksen hijau)
 - **Upload logo** (PNG/JPG/SVG) dengan pengaturan posisi (4 sudut), ukuran, dan pilihan tampil di semua slide atau sampul saja — bekerja di kedua mode
 - Unduh per slide sebagai PNG 1080px, atau semua sekaligus dalam `.zip`
 

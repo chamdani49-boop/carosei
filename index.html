@@ -258,6 +258,24 @@
     background: radial-gradient(130% 100% at 15% -10%, #34246b 0%, #201653 40%, #120d2e 75%, #0b0820 100%);
     color:#E7E3F7;
   }
+  .slide-canvas[data-theme="grid"]{
+    background:
+      linear-gradient(180deg, rgba(52,211,153,.10) 0%, rgba(52,211,153,0) 38%),
+      radial-gradient(120% 85% at 50% -8%, #0e2a2b 0%, #0a1a20 45%, #061016 78%, #040b10 100%);
+    color:#E4EFEC;
+  }
+  /* pola grid untuk tema Grid */
+  .grid-bg{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background-image:
+      linear-gradient(rgba(120,220,200,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120,220,200,.07) 1px, transparent 1px);
+    background-size:46px 46px, 46px 46px;
+    background-position:center top;
+  }
 
   .vslide{
     display:block;
@@ -326,6 +344,17 @@
   .slide-canvas[data-theme="nebula"] .accent-rule{background:#34d399;}
   .slide-canvas[data-theme="nebula"] .tagline{color:#9d92d6;}
   .slide-canvas[data-theme="nebula"] .frame-counter{color:#9d92d6;}
+
+  /* grid theme text tints */
+  .slide-canvas[data-theme="grid"] .sprocket-row{display:none;}
+  .slide-canvas[data-theme="grid"] .eyebrow{color:#7fb3a4;opacity:.95;}
+  .slide-canvas[data-theme="grid"] h3{color:#34d399;}
+  .slide-canvas[data-theme="grid"] p{color:#DCEBE7;}
+  .slide-canvas[data-theme="grid"] p.lead{color:#34d399;}
+  .slide-canvas[data-theme="grid"] .accent-rule{background:#34d399;}
+  .slide-canvas[data-theme="grid"] .tagline{color:#7fb3a4;}
+  .slide-canvas[data-theme="grid"] .frame-counter{color:#7fb3a4;}
+  .slide-canvas[data-theme="grid"] .card-outline{border-color:rgba(140,200,180,.28);}
 
   .card-outline{
     position:absolute;
@@ -441,6 +470,7 @@
         <div class="swatch" data-theme="ink" style="background:var(--ink);"><span style="color:var(--cream);">Ink</span></div>
         <div class="swatch" data-theme="rust" style="background:var(--rust);"><span style="color:var(--paper);">Rust</span></div>
         <div class="swatch" data-theme="nebula" style="background:linear-gradient(135deg,#2a1c5e,#120d2e);"><span style="color:#34d399;">Nebula</span></div>
+        <div class="swatch" data-theme="grid" style="background:radial-gradient(circle at 50% 0,#0e2a2b,#040b10);"><span style="color:#34d399;">Grid</span></div>
       </div>
     </div>
 
@@ -621,7 +651,12 @@ function renderSlideDOM(slide, aspect, theme){
   canvas.style.width = dims.w + 'px';
   canvas.style.height = dims.h + 'px';
 
-  if(theme === 'nebula'){
+  if(theme === 'nebula' || theme === 'grid'){
+    if(theme === 'grid'){
+      const gridBg = document.createElement('div');
+      gridBg.className = 'grid-bg';
+      canvas.appendChild(gridBg);
+    }
     const outline = document.createElement('div');
     outline.className = 'card-outline';
     canvas.appendChild(outline);
