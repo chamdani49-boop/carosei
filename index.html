@@ -270,6 +270,23 @@
       radial-gradient(120% 90% at 50% 0%, #0f1622 0%, #0b111b 45%, #080c14 78%, #05080e 100%);
     color:#E6EAF2;
   }
+  .slide-canvas[data-theme="amber"]{
+    background:
+      radial-gradient(60% 40% at 50% -4%, rgba(245,197,66,.13) 0%, rgba(245,197,66,0) 55%),
+      radial-gradient(120% 90% at 50% 0%, #17130a 0%, #12100b 45%, #0c0a08 78%, #070605 100%);
+    color:#EFEAE0;
+  }
+  /* garis aksen atas ala "radar saham" */
+  .top-bar{
+    position:absolute;
+    top:0; left:0; right:0;
+    height:1.6%;
+    z-index:4;
+    pointer-events:none;
+  }
+  .slide-canvas[data-theme="grid"]  .top-bar{background:linear-gradient(90deg,#0e3a2a,#34d399 50%,#0e3a2a);}
+  .slide-canvas[data-theme="alert"] .top-bar{background:linear-gradient(90deg,#5a2222,#f26d6d 50%,#5a2222);}
+  .slide-canvas[data-theme="amber"] .top-bar{background:linear-gradient(90deg,#5a4514,#f5c542 50%,#5a4514);}
   /* pola grid untuk tema Grid */
   .grid-bg{
     position:absolute;
@@ -373,6 +390,17 @@
   .slide-canvas[data-theme="alert"] .frame-counter{color:#8b93a3;}
   .slide-canvas[data-theme="alert"] .card-outline{border-color:rgba(160,170,190,.24);}
 
+  /* amber theme text tints (emas untuk sinyal netral/wait) */
+  .slide-canvas[data-theme="amber"] .sprocket-row{display:none;}
+  .slide-canvas[data-theme="amber"] .eyebrow{color:#b7a86f;opacity:.95;}
+  .slide-canvas[data-theme="amber"] h3{color:#f5c542;}
+  .slide-canvas[data-theme="amber"] p{color:#E6E0D2;}
+  .slide-canvas[data-theme="amber"] p.lead{color:#f5c542;}
+  .slide-canvas[data-theme="amber"] .accent-rule{background:#f5c542;}
+  .slide-canvas[data-theme="amber"] .tagline{color:#b7a86f;}
+  .slide-canvas[data-theme="amber"] .frame-counter{color:#b7a86f;}
+  .slide-canvas[data-theme="amber"] .card-outline{border-color:rgba(200,180,120,.24);}
+
   .card-outline{
     position:absolute;
     inset:3.5%;
@@ -456,6 +484,14 @@
         <button data-render="visual">Desain asli</button>
       </div>
       <div class="hint" id="renderHint">Ambil teks artikel dan tata ulang pakai template + tema di bawah.</div>
+      <div id="renderWidthWrap" style="display:none;margin-top:12px;">
+        <div class="hint" style="margin:0 0 6px;color:var(--amber);">Versi tampilan (mode Desain asli)</div>
+        <div class="segmented" id="renderWidth">
+          <button data-w="mobile" class="active">HP (mobile)</button>
+          <button data-w="desktop">PC (desktop)</button>
+        </div>
+        <div class="hint">HP merender HTML pada lebar 430px (layout mobile), PC pada 1280px (layout desktop). Hasil tetap diekspor 1080px.</div>
+      </div>
     </div>
 
     <div class="section" id="sectionSplit">
@@ -489,6 +525,7 @@
         <div class="swatch" data-theme="nebula" style="background:linear-gradient(135deg,#2a1c5e,#120d2e);"><span style="color:#34d399;">Nebula</span></div>
         <div class="swatch" data-theme="grid" style="background:radial-gradient(circle at 50% 0,#0e2a2b,#040b10);"><span style="color:#34d399;">Grid</span></div>
         <div class="swatch" data-theme="alert" style="background:radial-gradient(circle at 50% 0,#111a28,#05080e);"><span style="color:#f26d6d;">Alert</span></div>
+        <div class="swatch" data-theme="amber" style="background:radial-gradient(circle at 50% 0,#1c170c,#070605);"><span style="color:#f5c542;">Amber</span></div>
       </div>
     </div>
 
@@ -550,6 +587,7 @@
 <script>
 const state = {
   renderMode: 'text', // 'text' | 'visual'
+  renderWidth: 'mobile', // 'mobile' | 'desktop' (untuk mode Desain asli)
   mode: 'heading',
   charLimit: 380,
   aspect: 'square',
@@ -574,6 +612,8 @@ const REAL = {
   portrait:{w:1080, h:1350},
   story:   {w:1080, h:1920}
 };
+// lebar viewport saat merender HTML di mode "Desain asli"
+const RENDER_WIDTHS = { mobile: 430, desktop: 1280 };
 
 const SAMPLE_HTML = `<h1>Mengapa Kopi Pagi Terasa Lebih Nikmat</h1>
 <p>Banyak orang percaya secangkir kopi pertama di pagi hari selalu terasa paling istimewa. Ternyata ada penjelasan ilmiah di balik sensasi ini, mulai dari ritme tubuh hingga cara otak memproses rasa.</p>
@@ -669,11 +709,14 @@ function renderSlideDOM(slide, aspect, theme){
   canvas.style.width = dims.w + 'px';
   canvas.style.height = dims.h + 'px';
 
-  if(theme === 'nebula' || theme === 'grid' || theme === 'alert'){
-    if(theme === 'grid' || theme === 'alert'){
+  if(theme === 'nebula' || theme === 'grid' || theme === 'alert' || theme === 'amber'){
+    if(theme === 'grid' || theme === 'alert' || theme === 'amber'){
       const gridBg = document.createElement('div');
       gridBg.className = 'grid-bg';
       canvas.appendChild(gridBg);
+      const topBar = document.createElement('div');
+      topBar.className = 'top-bar';
+      canvas.appendChild(topBar);
     }
     const outline = document.createElement('div');
     outline.className = 'card-outline';
@@ -850,12 +893,13 @@ async function generateVisual(){
   status('Merender desain asli...');
 
   const dims = REAL[state.aspect];
+  const RW = RENDER_WIDTHS[state.renderWidth] || dims.w;
 
   const iframe = document.createElement('iframe');
   iframe.style.position = 'fixed';
   iframe.style.left = '-99999px';
   iframe.style.top = '0';
-  iframe.style.width = dims.w + 'px';
+  iframe.style.width = RW + 'px';
   iframe.style.height = '100px';
   iframe.style.border = '0';
   iframe.setAttribute('aria-hidden','true');
@@ -869,7 +913,7 @@ async function generateVisual(){
   doc.write(html);
   doc.close();
 
-  try{ doc.documentElement.style.width = dims.w + 'px'; }catch(e){}
+  try{ doc.documentElement.style.width = RW + 'px'; }catch(e){}
 
   await waitForIframe(iframe);
 
@@ -883,11 +927,11 @@ async function generateVisual(){
   try{
     big = await html2canvas(target, {
       backgroundColor: null,
-      scale: 1,
+      scale: dims.w / RW,
       useCORS: true,
-      width: dims.w,
+      width: RW,
       height: fullH,
-      windowWidth: dims.w,
+      windowWidth: RW,
       windowHeight: fullH
     });
   }catch(err){
@@ -1058,6 +1102,7 @@ document.getElementById('renderMode').addEventListener('click', e=>{
   const isVisual = state.renderMode === 'visual';
   document.getElementById('sectionSplit').classList.toggle('muted', isVisual);
   document.getElementById('sectionTheme').classList.toggle('muted', isVisual);
+  document.getElementById('renderWidthWrap').style.display = isVisual ? 'block' : 'none';
   document.getElementById('renderHint').textContent = isVisual
     ? 'Render HTML apa adanya (warna/gambar/layout dipertahankan) lalu potong otomatis sesuai rasio. Pakai file HTML self-contained.'
     : 'Ambil teks artikel dan tata ulang pakai template + tema di bawah.';
@@ -1069,8 +1114,15 @@ document.getElementById('renderMode').addEventListener('click', e=>{
   document.getElementById('downloadAllBtn').style.display = 'none';
 });
 
-document.getElementById('splitMode').addEventListener('click', e=>{
+document.getElementById('renderWidth').addEventListener('click', e=>{
   if(e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#renderWidth button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  state.renderWidth = e.target.dataset.w;
+  if(state.renderMode === 'visual' && state.visualSlides.length) generateVisual();
+});
+
+document.getElementById('splitMode').addEventListener('click', e=>{  if(e.target.tagName !== 'BUTTON') return;
   document.querySelectorAll('#splitMode button').forEach(b=>b.classList.remove('active'));
   e.target.classList.add('active');
   state.mode = e.target.dataset.mode;
