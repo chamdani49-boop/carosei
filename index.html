@@ -348,6 +348,17 @@
     margin:0;
   }
   .slide-body p.lead{font-weight:600;}
+
+  /* gambar sisipan per-slide */
+  .slide-photo{
+    width:100%;
+    max-height:44%;
+    object-fit:cover;
+    border-radius:12px;
+    display:block;
+    margin:.2em 0;
+  }
+  .cover .slide-photo{max-height:40%;}
   .cover .slide-body h3{font-size:2.1em;}
   .cover .slide-body .tagline{
     font-family:'IBM Plex Mono',monospace;
@@ -477,7 +488,9 @@
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:8px;
   }
+  .frame-actions .btn-group{display:flex;gap:6px;}
   .frame-actions .label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--slate);}
   .frame-actions button{
     background:none;
@@ -574,6 +587,7 @@
       <label class="field-label">06 — Logo (opsional)</label>
       <button class="ghost-btn" id="logoBtn" style="width:100%;">Unggah logo (PNG / JPG / SVG)</button>
       <input type="file" id="logoInput" accept="image/png,image/jpeg,image/svg+xml,image/webp,image/*" style="display:none;">
+      <input type="file" id="slideImgInput" accept="image/*" style="display:none;">
       <div class="logo-preview" id="logoPreview">
         <img id="logoThumb" alt="logo">
         <span class="logo-name" id="logoName"></span>
@@ -851,6 +865,14 @@ function renderSlideDOM(slide, aspect, theme){
     body.appendChild(h);
   }
 
+  if(slide.image){
+    const photo = document.createElement('img');
+    photo.className = 'slide-photo';
+    photo.src = slide.image;
+    photo.crossOrigin = 'anonymous';
+    body.appendChild(photo);
+  }
+
   slide.paragraphs.forEach(p=>{
     const el = document.createElement('p');
     if(p.strong) el.className = 'lead';
@@ -917,8 +939,24 @@ function renderStage(){
     const btn = document.createElement('button');
     btn.textContent = 'Unduh PNG';
     btn.onclick = () => downloadSlide(canvas, i);
+
+    const imgBtn = document.createElement('button');
+    imgBtn.textContent = slide.image ? 'Ganti gambar' : '+ Gambar';
+    imgBtn.onclick = () => openSlideImagePicker(i);
+
+    const group = document.createElement('div');
+    group.className = 'btn-group';
+    group.appendChild(imgBtn);
+    if(slide.image){
+      const rmBtn = document.createElement('button');
+      rmBtn.textContent = 'Hapus gambar';
+      rmBtn.onclick = () => { state.slides[i].image = null; renderStage(); };
+      group.appendChild(rmBtn);
+    }
+    group.appendChild(btn);
+
     actions.appendChild(label);
-    actions.appendChild(btn);
+    actions.appendChild(group);
     frame.appendChild(actions);
 
     strip.appendChild(frame);
@@ -1360,8 +1398,32 @@ document.getElementById('logoSize').addEventListener('input', e=>{
 });
 document.getElementById('logoSize').addEventListener('change', ()=>{ refresh(true); });
 
+/* ---- gambar sisipan per-slide ---- */
+function openSlideImagePicker(i){
+  state._pendingImg = i;
+  document.getElementById('slideImgInput').click();
+}
+document.getElementById('slideImgInput').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  const idx = state._pendingImg;
+  if(!file || idx == null || !state.slides[idx]){ e.target.value = ''; return; }
+  if(!file.type.startsWith('image/')){
+    status('File harus berupa gambar.');
+    e.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    state.slides[idx].image = ev.target.result;
+    renderStage();
+    status('Gambar disisipkan ke slide ' + (idx+1) + '.');
+  };
+  reader.onerror = () => status('Gagal membaca gambar. Coba lagi.');
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+
 document.getElementById('generateBtn').addEventListener('click', generate);
-document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);
-</script>
+document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);</script>
 </body>
 </html>
