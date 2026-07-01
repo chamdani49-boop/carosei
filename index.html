@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Carousel Reel — Pemecah Artikel jadi Slide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -153,6 +154,51 @@
   .ghost-btn:hover{border-color:var(--amber);color:var(--amber);}
   .status{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--slate);}
 
+  /* ---- logo control ---- */
+  .logo-preview{
+    margin-top:10px;
+    display:none;
+    align-items:center;
+    gap:10px;
+    background:#0f0e0d;
+    border:1px solid #33302b;
+    border-radius:6px;
+    padding:8px 10px;
+  }
+  .logo-preview img{
+    max-width:48px;
+    max-height:48px;
+    background:
+      linear-gradient(45deg,#2c2a27 25%,transparent 25%),
+      linear-gradient(-45deg,#2c2a27 25%,transparent 25%),
+      linear-gradient(45deg,transparent 75%,#2c2a27 75%),
+      linear-gradient(-45deg,transparent 75%,#2c2a27 75%);
+    background-size:10px 10px;
+    background-position:0 0,0 5px,5px -5px,-5px 0;
+    border-radius:4px;
+    object-fit:contain;
+  }
+  .logo-preview .logo-name{
+    flex:1;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--cream);
+    word-break:break-all;
+    line-height:1.4;
+  }
+  .logo-preview .logo-remove{
+    background:none;
+    border:1px solid #3a3730;
+    color:var(--slate);
+    border-radius:5px;
+    padding:4px 9px;
+    font-size:11px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .logo-preview .logo-remove:hover{border-color:var(--rust);color:var(--rust);}
+  .logo-opts{display:none;flex-direction:column;gap:12px;margin-top:12px;}
+
   /* ---- right panel / filmstrip ---- */
   .stage{
     padding:32px 32px 60px;
@@ -267,6 +313,17 @@
     opacity:.65;
   }
 
+  /* ---- logo on slide ---- */
+  .slide-logo{
+    position:absolute;
+    object-fit:contain;
+    pointer-events:none;
+  }
+  .slide-logo[data-pos="top-left"]{top:6%;left:9%;}
+  .slide-logo[data-pos="top-right"]{top:6%;right:9%;}
+  .slide-logo[data-pos="bottom-left"]{bottom:8%;left:9%;}
+  .slide-logo[data-pos="bottom-right"]{bottom:8%;right:9%;}
+
   .frame-actions{
     display:flex;
     justify-content:space-between;
@@ -342,6 +399,43 @@
       </div>
     </div>
 
+    <div>
+      <label class="field-label">05 — Logo (opsional)</label>
+      <button class="ghost-btn" id="logoBtn" style="width:100%;">Unggah logo (PNG / JPG / SVG)</button>
+      <input type="file" id="logoInput" accept="image/png,image/jpeg,image/svg+xml,image/webp,image/*" style="display:none;">
+      <div class="logo-preview" id="logoPreview">
+        <img id="logoThumb" alt="logo">
+        <span class="logo-name" id="logoName"></span>
+        <button class="logo-remove" id="logoRemove">Hapus</button>
+      </div>
+
+      <div class="logo-opts" id="logoOpts">
+        <div>
+          <div class="hint" style="margin:0 0 6px;color:var(--amber);">Posisi</div>
+          <div class="segmented" id="logoPos">
+            <button data-pos="top-left">Kiri atas</button>
+            <button data-pos="top-right" class="active">Kanan atas</button>
+            <button data-pos="bottom-left">Kiri bawah</button>
+            <button data-pos="bottom-right">Kanan bawah</button>
+          </div>
+        </div>
+        <div>
+          <div class="hint" style="margin:0 0 6px;color:var(--amber);">Ukuran</div>
+          <div class="slider-row">
+            <input type="range" id="logoSize" min="6" max="40" step="1" value="16">
+            <span class="charcount" id="logoSizeVal">16%</span>
+          </div>
+        </div>
+        <div>
+          <div class="hint" style="margin:0 0 6px;color:var(--amber);">Tampil di</div>
+          <div class="segmented" id="logoScope">
+            <button data-scope="all" class="active">Semua slide</button>
+            <button data-scope="cover">Sampul saja</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <button class="primary-btn" id="generateBtn">Buat slide carousel</button>
     <button class="ghost-btn" id="downloadAllBtn" style="display:none;">Unduh semua (.zip)</button>
     <div class="status" id="statusLine"></div>
@@ -366,7 +460,11 @@ const state = {
   charLimit: 380,
   aspect: 'square',
   theme: 'paper',
-  slides: []
+  slides: [],
+  logo: null,        // data URL gambar logo
+  logoPos: 'top-right',
+  logoSize: 16,      // persen dari lebar slide
+  logoScope: 'all'   // 'all' | 'cover'
 };
 
 const ASPECTS = {
@@ -386,8 +484,6 @@ const SAMPLE_HTML = `<h1>Mengapa Kopi Pagi Terasa Lebih Nikmat</h1>
 <p>Aspek psikologis juga berperan besar. Rutinitas menyeduh kopi di pagi hari menjadi semacam jeda tenang sebelum kesibukan dimulai, dan otak mengasosiasikan momen ini dengan rasa nyaman dan kendali atas hari yang akan dijalani.</p>
 <h2>Kesimpulan</h2>
 <p>Kombinasi hormon, kondisi indra, dan ritual pagi membuat kopi pertama terasa berbeda. Jadi bukan hanya perasaan semata, ada dasar biologis dan kebiasaan yang membuatnya begitu istimewa.</p>`;
-
-function escapeForCanvas(text){ return text; }
 
 function parseInput(raw){
   raw = raw.trim();
@@ -508,6 +604,19 @@ function renderSlideDOM(slide, aspect, theme){
   counter.className = 'frame-counter';
   counter.textContent = String(slide.index).padStart(2,'0') + ' / ' + String(slide.total).padStart(2,'0');
   canvas.appendChild(counter);
+
+  // ---- logo ----
+  if(state.logo && (state.logoScope === 'all' || slide.type === 'cover')){
+    const logo = document.createElement('img');
+    logo.className = 'slide-logo';
+    logo.dataset.pos = state.logoPos;
+    logo.src = state.logo;
+    logo.style.width = state.logoSize + '%';
+    logo.style.height = 'auto';
+    logo.style.maxHeight = state.logoSize + '%';
+    logo.crossOrigin = 'anonymous';
+    canvas.appendChild(logo);
+  }
 
   const bottomSprocket = document.createElement('div');
   bottomSprocket.className = 'sprocket-row';
@@ -658,6 +767,61 @@ document.getElementById('loadSample').addEventListener('click', ()=>{
 });
 document.getElementById('clearInput').addEventListener('click', ()=>{
   document.getElementById('inputArticle').value = '';
+});
+
+/* ---- logo controls ---- */
+document.getElementById('logoBtn').addEventListener('click', ()=>{
+  document.getElementById('logoInput').click();
+});
+document.getElementById('logoInput').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){
+    document.getElementById('statusLine').textContent = 'File logo harus berupa gambar (PNG/JPG/SVG).';
+    e.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    state.logo = ev.target.result;
+    document.getElementById('logoThumb').src = state.logo;
+    document.getElementById('logoName').textContent = file.name;
+    document.getElementById('logoPreview').style.display = 'flex';
+    document.getElementById('logoOpts').style.display = 'flex';
+    document.getElementById('statusLine').textContent = 'Logo dimuat. PNG transparan paling rapi.';
+    if(state.slides.length) renderStage();
+  };
+  reader.onerror = () => {
+    document.getElementById('statusLine').textContent = 'Gagal membaca logo. Coba lagi.';
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+document.getElementById('logoRemove').addEventListener('click', ()=>{
+  state.logo = null;
+  document.getElementById('logoPreview').style.display = 'none';
+  document.getElementById('logoOpts').style.display = 'none';
+  document.getElementById('logoInput').value = '';
+  if(state.slides.length) renderStage();
+});
+document.getElementById('logoPos').addEventListener('click', e=>{
+  if(e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#logoPos button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  state.logoPos = e.target.dataset.pos;
+  if(state.slides.length) renderStage();
+});
+document.getElementById('logoScope').addEventListener('click', e=>{
+  if(e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#logoScope button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  state.logoScope = e.target.dataset.scope;
+  if(state.slides.length) renderStage();
+});
+document.getElementById('logoSize').addEventListener('input', e=>{
+  state.logoSize = parseInt(e.target.value,10);
+  document.getElementById('logoSizeVal').textContent = state.logoSize + '%';
+  if(state.slides.length) renderStage();
 });
 
 document.getElementById('generateBtn').addEventListener('click', generate);
