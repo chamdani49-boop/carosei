@@ -432,6 +432,15 @@
   .slide-canvas[data-theme="glass"].cover .accent-rule{margin-left:auto;margin-right:auto;}
   .slide-svg{flex-shrink:0;}
 
+  /* ikon dekoratif untuk semua tema kartu modern */
+  .slide-icon{display:flex;margin-bottom:.15em;}
+  .eyebrow.has-icon{display:flex;align-items:center;gap:.5em;}
+  .slide-canvas[data-theme="grid"]   .slide-svg{color:#34d399;}
+  .slide-canvas[data-theme="alert"]  .slide-svg{color:#f26d6d;}
+  .slide-canvas[data-theme="amber"]  .slide-svg{color:#f5c542;}
+  .slide-canvas[data-theme="nebula"] .slide-svg{color:#34d399;}
+  .slide-canvas[data-theme="glass"]  .slide-svg{color:#ffffff;}
+
   .card-outline{
     position:absolute;
     inset:3.5%;
@@ -647,43 +656,55 @@ const REAL = {
 // lebar viewport saat merender HTML di mode "Desain asli"
 const RENDER_WIDTHS = { mobile: 430, desktop: 1280 };
 
-const SAMPLE_HTML = `<h1>Mengapa Kopi Pagi Terasa Lebih Nikmat</h1>
-<p>Banyak orang percaya secangkir kopi pertama di pagi hari selalu terasa paling istimewa. Ternyata ada penjelasan ilmiah di balik sensasi ini, mulai dari ritme tubuh hingga cara otak memproses rasa.</p>
-<h2>Kortisol dan Ritme Sirkadian</h2>
-<p>Kadar hormon kortisol secara alami memuncak sekitar 30-45 menit setelah bangun tidur. Saat kortisol tinggi, tubuh sebenarnya sudah dalam kondisi cukup waspada, sehingga kafein bekerja selaras dengan ritme alami ini alih-alih melawannya.</p>
-<p>Karena itu, banyak ahli menyarankan menunda kopi pertama sekitar satu jam setelah bangun agar efeknya lebih terasa dan tidak cepat hilang di siang hari.</p>
-<h2>Indra Perasa Lebih Segar</h2>
-<p>Setelah tidur semalaman, mulut beristirahat dari makanan dan minuman lain, sehingga indra perasa berada dalam kondisi paling netral. Ini membuat rasa pahit dan aroma kopi tercium lebih jelas dan kompleks dibanding cangkir-cangkir berikutnya.</p>
-<h2>Ritual, Bukan Sekadar Rasa</h2>
-<p>Aspek psikologis juga berperan besar. Rutinitas menyeduh kopi di pagi hari menjadi semacam jeda tenang sebelum kesibukan dimulai, dan otak mengasosiasikan momen ini dengan rasa nyaman dan kendali atas hari yang akan dijalani.</p>
+const SAMPLE_HTML = `<h1>BBCA Masih Layak Koleksi? Ini Analisis Valuasinya</h1>
+<p>Saham Bank Central Asia (BBCA) kembali jadi sorotan setelah harga pasarnya bergerak di kisaran Rp 5.675. Pertanyaannya: apakah harga ini masih murah, wajar, atau justru sudah mahal dibanding nilai intrinsiknya?</p>
+<h2>Fundamental: Nilai Wajar vs Harga Pasar</h2>
+<p>Berdasarkan metode Free Cash Flow (FCF), estimasi nilai wajar BBCA berada di sekitar Rp 6.824 per lembar. Dengan harga pasar Rp 5.675, terdapat potensi kenaikan sekitar 20,3% menuju nilai wajarnya.</p>
+<p>Margin of safety sebesar 16,8% memberi ruang aman bagi investor jangka panjang. Rasio PER dan PBV yang masih sejalan dengan rata-rata historis memperkuat status "murah" secara fundamental.</p>
+<h2>Teknikal: Tren dan Level Kunci</h2>
+<p>Secara teknikal, harga bergerak di atas support kuat dan menunjukkan pola akumulasi. Selama bertahan di atas level support, peluang rebound menuju resistance berikutnya cukup terbuka.</p>
+<h2>Makro Ekonomi: Suku Bunga dan Rupiah</h2>
+<p>Arah kebijakan suku bunga BI dan pergerakan kurs rupiah terhadap USD menjadi faktor penting. Suku bunga yang mulai stabil dan rupiah yang terjaga cenderung positif bagi sektor perbankan.</p>
 <h2>Kesimpulan</h2>
-<p>Kombinasi hormon, kondisi indra, dan ritual pagi membuat kopi pertama terasa berbeda. Jadi bukan hanya perasaan semata, ada dasar biologis dan kebiasaan yang membuatnya begitu istimewa.</p>`;
+<p>Kombinasi valuasi fundamental yang menarik, sinyal teknikal yang sehat, dan latar makro yang kondusif menempatkan BBCA pada zona akumulasi. Namun, keputusan investasi tetap bergantung pada profil risiko masing-masing.</p>`;
 
 function status(msg){ document.getElementById('statusLine').textContent = msg; }
 
-/* ikon SVG dekoratif (inline agar ikut ter-export) */
+/* ikon SVG dekoratif bertema finansial/pasar modal (inline agar ikut ter-export) */
 const ICONS = {
-  spark:'<path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',
-  fire:'<path d="M12 3c1 3-2 4-2 7a2 2 0 0 0 4 0c0-1 0-1 .5-2 1 2 1.6 3 1.6 5a4.1 4.1 0 0 1-8.2 0c0-3 3-5 4.1-10z"/>',
+  candles:'<line x1="7" y1="3" x2="7" y2="21"/><rect x="4.5" y="7" width="5" height="8" rx="1"/><line x1="16" y1="3" x2="16" y2="21"/><rect x="13.5" y="10" width="5" height="7" rx="1"/>',
+  up:'<line x1="12" y1="20" x2="12" y2="5"/><polyline points="6 11 12 5 18 11"/>',
+  down:'<line x1="12" y1="4" x2="12" y2="19"/><polyline points="6 13 12 19 18 13"/>',
   trend:'<polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/>',
-  warn:'<path d="M12 3l9 16H3z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="16.6" x2="12" y2="16.7"/>',
-  bulb:'<path d="M12 3a6 6 0 0 0-4 10c1 1 1.5 2 1.5 3h5c0-1 .5-2 1.5-3a6 6 0 0 0-4-10z"/><line x1="9.5" y1="20" x2="14.5" y2="20"/>',
+  scale:'<line x1="12" y1="3" x2="12" y2="21"/><line x1="5" y1="7" x2="19" y2="7"/><path d="M5 7l-2.5 6a3 3 0 0 0 5 0z"/><path d="M19 7l-2.5 6a3 3 0 0 0 5 0z"/><line x1="8" y1="21" x2="16" y2="21"/>',
+  bank:'<line x1="3" y1="21" x2="21" y2="21"/><path d="M4 9l8-5 8 5"/><line x1="5" y1="9" x2="5" y2="18"/><line x1="9" y1="9" x2="9" y2="18"/><line x1="15" y1="9" x2="15" y2="18"/><line x1="19" y1="9" x2="19" y2="18"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+  money:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><line x1="6" y1="9" x2="6.1" y2="9"/><line x1="18" y1="15" x2="18.1" y2="15"/>',
+  percent:'<line x1="19" y1="5" x2="5" y2="19"/><circle cx="7.5" cy="7.5" r="2.4"/><circle cx="16.5" cy="16.5" r="2.4"/>',
   chart:'<line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="12" width="3" height="6"/><rect x="11" y="8" width="3" height="10"/><rect x="16" y="4" width="3" height="14"/>',
-  money:'<circle cx="12" cy="12" r="8"/><path d="M12 7v10M9.5 9.6c0-1 1-1.6 2.5-1.6s2.5.6 2.5 1.6-1 1.4-2.5 1.4-2.5.5-2.5 1.5 1 1.5 2.5 1.5 2.5-.5 2.5-1.5"/>',
-  coffee:'<path d="M4 8h13v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 9h2a2 2 0 0 1 0 4h-2"/><line x1="7" y1="3" x2="7" y2="5"/><line x1="11" y1="3" x2="11" y2="5"/>',
-  rocket:'<path d="M5 15c-1 1-1.5 4-1.5 4s3-.5 4-1.5M14 4c3 0 6 3 6 6-2 4-6 8-9 9l-3-3c1-3 5-7 6-9a6 6 0 0 1 0-3z"/><circle cx="14.5" cy="9.5" r="1.4"/>'
+  calendar:'<rect x="4" y="5" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="9" y1="3" x2="9" y2="7"/><line x1="15" y1="3" x2="15" y2="7"/>',
+  warn:'<path d="M12 3l9 16H3z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="16.6" x2="12" y2="16.7"/>',
+  fire:'<path d="M12 3c1 3-2 4-2 7a2 2 0 0 0 4 0c0-1 0-1 .5-2 1 2 1.6 3 1.6 5a4.1 4.1 0 0 1-8.2 0c0-3 3-5 4.1-10z"/>',
+  bulb:'<path d="M12 3a6 6 0 0 0-4 10c1 1 1.5 2 1.5 3h5c0-1 .5-2 1.5-3a6 6 0 0 0-4-10z"/><line x1="9.5" y1="20" x2="14.5" y2="20"/>',
+  rocket:'<path d="M5 15c-1 1-1.5 4-1.5 4s3-.5 4-1.5M14 4c3 0 6 3 6 6-2 4-6 8-9 9l-3-3c1-3 5-7 6-9a6 6 0 0 1 0-3z"/><circle cx="14.5" cy="9.5" r="1.4"/>',
+  spark:'<path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>'
 };
 function pickIcon(text){
-  const t = (text || '').toLowerCase();
-  if(/(awas|risiko|hati-hati|turun|mahal|overvalued|waspada|bahaya|warning|rugi)/.test(t)) return 'warn';
-  if(/(peluang|untung|emas|cuan|diskon|murah|promo|hot)/.test(t)) return 'fire';
-  if(/(harga|nilai|rp|saham|valuasi|investasi|dividen|margin|uang|profit)/.test(t)) return 'money';
-  if(/(data|statistik|grafik|angka|persen|chart|analis|kinerja)/.test(t)) return 'chart';
-  if(/(ide|tips|cara|kenapa|mengapa|rahasia|solusi|strategi|kesimpulan)/.test(t)) return 'bulb';
-  if(/(kopi|coffee|teh|minum|kafein)/.test(t)) return 'coffee';
-  if(/(naik|tumbuh|growth|tren|trend|momentum|sinyal|radar|melesat)/.test(t)) return 'trend';
-  if(/(mulai|masa depan|inovasi|luncur|baru)/.test(t)) return 'rocket';
-  return 'spark';
+  const t = ' ' + (text || '').toLowerCase() + ' ';
+  if(/(bearish|anjlok|koreksi| jual|sell|overvalued|mahal| rugi|loss|melemah| drop|crash|terjun|ambles)/.test(t)) return 'down';
+  if(/(bullish| reli|rally|melesat|cuan|profit|untung| beli| buy|undervalued|murah|diskon|breakout|rebound|menguat|ath|all time high)/.test(t)) return 'up';
+  if(/(teknikal|technical|candle|candlestick|grafik| chart |support|resisten|resistance|moving average|\brsi\b|\bmacd\b|pola|pattern|volume|indikator)/.test(t)) return 'candles';
+  if(/(fundamental|valuasi|valuation|\bper\b|\bpbv\b|\broe\b|\broa\b|laba|earnings|revenue|pendapatan|dividen|dividend|book value|\bdcf\b|graham|intrinsik|rasio)/.test(t)) return 'scale';
+  if(/(makro|macro|inflasi|inflation|suku bunga|interest rate|bi rate|the fed|\bfed\b|\bgdp\b|\bpdb\b|ekonomi|resesi|recession|pengangguran|neraca|kebijakan moneter)/.test(t)) return 'bank';
+  if(/(\busd\b|dolar|dollar| kurs|forex|valas|nilai tukar|greenback|mata uang)/.test(t)) return 'globe';
+  if(/(persen|yield|imbal hasil|return| margin|\bmos\b|%)/.test(t)) return 'percent';
+  if(/(rupiah|\bidr\b|\brp\b|harga|nilai wajar|modal|kapitalisasi|market cap|uang)/.test(t)) return 'money';
+  if(/(risiko|awas|hati-hati|waspada|bahaya|warning)/.test(t)) return 'warn';
+  if(/(peluang| hot |momentum|sinyal|radar|rekomendasi)/.test(t)) return 'fire';
+  if(/(\bipo\b|listing|emiten baru|luncur|inovasi)/.test(t)) return 'rocket';
+  if(/(jadwal|kalender|\brups\b|cum date|ex date|tanggal|agenda)/.test(t)) return 'calendar';
+  if(/(tips|cara|kenapa|mengapa|strategi|belajar|panduan|kesimpulan|analisa|analisis)/.test(t)) return 'bulb';
+  return 'chart';
 }
 function iconSVG(name, sizeEm){
   return '<svg class="slide-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
@@ -797,19 +818,24 @@ function renderSlideDOM(slide, aspect, theme){
   const body = document.createElement('div');
   body.className = 'slide-body';
 
+  const ICON_THEMES = ['glass','grid','alert','amber','nebula'];
+  const useIcon = ICON_THEMES.indexOf(theme) !== -1;
   const iconSrcText = slide.heading || (slide.paragraphs[0] && slide.paragraphs[0].text) || '';
-  if(theme === 'glass' && slide.type === 'cover'){
+  const iconName = pickIcon(iconSrcText);
+
+  if(useIcon && slide.type === 'cover'){
     const iw = document.createElement('div');
     iw.className = 'slide-icon';
-    iw.innerHTML = iconSVG(pickIcon(iconSrcText), 2.8);
+    iw.innerHTML = iconSVG(iconName, theme === 'glass' ? 2.8 : 2.2);
     body.appendChild(iw);
   }
 
   const eyebrow = document.createElement('div');
   eyebrow.className = 'eyebrow';
   const eyeText = slide.type === 'cover' ? 'FRAME 01 · MULAI' : 'CAROUSEL REEL';
-  if(theme === 'glass' && slide.type !== 'cover'){
-    eyebrow.innerHTML = iconSVG(pickIcon(iconSrcText), 1.15) + '<span>' + eyeText + '</span>';
+  if(useIcon && slide.type !== 'cover'){
+    eyebrow.classList.add('has-icon');
+    eyebrow.innerHTML = iconSVG(iconName, 1.15) + '<span>' + eyeText + '</span>';
   } else {
     eyebrow.textContent = eyeText;
   }
