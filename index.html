@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Carousel Reel — Pemecah Artikel jadi Slide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -111,9 +112,10 @@
   }
   .segmented button:last-child{border-right:none;}
   .segmented button.active{background:var(--amber);color:var(--ink);font-weight:600;}
-  .swatches{display:flex;gap:10px;}
+  .swatches{display:flex;gap:10px;flex-wrap:wrap;}
   .swatch{
-    flex:1;
+    flex:1 1 40%;
+    min-width:70px;
     height:52px;
     border-radius:6px;
     border:2px solid transparent;
@@ -152,6 +154,52 @@
   }
   .ghost-btn:hover{border-color:var(--amber);color:var(--amber);}
   .status{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--slate);}
+  .section.muted{opacity:.4;pointer-events:none;}
+
+  /* ---- logo control ---- */
+  .logo-preview{
+    margin-top:10px;
+    display:none;
+    align-items:center;
+    gap:10px;
+    background:#0f0e0d;
+    border:1px solid #33302b;
+    border-radius:6px;
+    padding:8px 10px;
+  }
+  .logo-preview img{
+    max-width:48px;
+    max-height:48px;
+    background:
+      linear-gradient(45deg,#2c2a27 25%,transparent 25%),
+      linear-gradient(-45deg,#2c2a27 25%,transparent 25%),
+      linear-gradient(45deg,transparent 75%,#2c2a27 75%),
+      linear-gradient(-45deg,transparent 75%,#2c2a27 75%);
+    background-size:10px 10px;
+    background-position:0 0,0 5px,5px -5px,-5px 0;
+    border-radius:4px;
+    object-fit:contain;
+  }
+  .logo-preview .logo-name{
+    flex:1;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--cream);
+    word-break:break-all;
+    line-height:1.4;
+  }
+  .logo-preview .logo-remove{
+    background:none;
+    border:1px solid #3a3730;
+    color:var(--slate);
+    border-radius:5px;
+    padding:4px 9px;
+    font-size:11px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .logo-preview .logo-remove:hover{border-color:var(--rust);color:var(--rust);}
+  .logo-opts{display:none;flex-direction:column;gap:12px;margin-top:12px;}
 
   /* ---- right panel / filmstrip ---- */
   .stage{
@@ -206,6 +254,34 @@
   .slide-canvas[data-theme="paper"]{background:var(--paper);color:var(--ink);}
   .slide-canvas[data-theme="ink"]{background:var(--ink);color:var(--cream);}
   .slide-canvas[data-theme="rust"]{background:var(--rust);color:var(--paper);}
+  .slide-canvas[data-theme="nebula"]{
+    background: radial-gradient(130% 100% at 15% -10%, #34246b 0%, #201653 40%, #120d2e 75%, #0b0820 100%);
+    color:#E7E3F7;
+  }
+  .slide-canvas[data-theme="grid"]{
+    background:
+      linear-gradient(180deg, rgba(52,211,153,.10) 0%, rgba(52,211,153,0) 38%),
+      radial-gradient(120% 85% at 50% -8%, #0e2a2b 0%, #0a1a20 45%, #061016 78%, #040b10 100%);
+    color:#E4EFEC;
+  }
+  /* pola grid untuk tema Grid */
+  .grid-bg{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background-image:
+      linear-gradient(rgba(120,220,200,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120,220,200,.07) 1px, transparent 1px);
+    background-size:46px 46px, 46px 46px;
+    background-position:center top;
+  }
+
+  .vslide{
+    display:block;
+    border-radius:4px;
+    box-shadow:0 12px 30px rgba(0,0,0,.45);
+  }
 
   .sprocket-row{
     height:12px;
@@ -215,6 +291,7 @@
   .slide-canvas[data-theme="paper"] .sprocket-row{background-image:radial-gradient(circle, var(--ink) 2.4px, transparent 2.8px); background-size:22px 12px; background-repeat:repeat-x;}
   .slide-canvas[data-theme="ink"] .sprocket-row{background-image:radial-gradient(circle, var(--amber) 2.4px, transparent 2.8px); background-size:22px 12px; background-repeat:repeat-x;}
   .slide-canvas[data-theme="rust"] .sprocket-row{background-image:radial-gradient(circle, var(--paper) 2.4px, transparent 2.8px); background-size:22px 12px; background-repeat:repeat-x;}
+  .slide-canvas[data-theme="nebula"] .sprocket-row{background-image:radial-gradient(circle, #5a4da3 2.4px, transparent 2.8px); background-size:22px 12px; background-repeat:repeat-x; opacity:.5;}
 
   .slide-body{
     flex:1;
@@ -224,6 +301,8 @@
     justify-content:center;
     gap:.9em;
     overflow:hidden;
+    position:relative;
+    z-index:1;
   }
   .slide-body .eyebrow{
     font-family:'IBM Plex Mono',monospace;
@@ -257,6 +336,35 @@
   .slide-canvas[data-theme="ink"] .accent-rule{background:var(--amber);}
   .slide-canvas[data-theme="rust"] .accent-rule{background:var(--ink);}
 
+  /* nebula theme text tints */
+  .slide-canvas[data-theme="nebula"] .eyebrow{color:#9d92d6;opacity:.95;}
+  .slide-canvas[data-theme="nebula"] h3{color:#34d399;}
+  .slide-canvas[data-theme="nebula"] p{color:#D6D1EC;}
+  .slide-canvas[data-theme="nebula"] p.lead{color:#34d399;}
+  .slide-canvas[data-theme="nebula"] .accent-rule{background:#34d399;}
+  .slide-canvas[data-theme="nebula"] .tagline{color:#9d92d6;}
+  .slide-canvas[data-theme="nebula"] .frame-counter{color:#9d92d6;}
+
+  /* grid theme text tints */
+  .slide-canvas[data-theme="grid"] .sprocket-row{display:none;}
+  .slide-canvas[data-theme="grid"] .eyebrow{color:#7fb3a4;opacity:.95;}
+  .slide-canvas[data-theme="grid"] h3{color:#34d399;}
+  .slide-canvas[data-theme="grid"] p{color:#DCEBE7;}
+  .slide-canvas[data-theme="grid"] p.lead{color:#34d399;}
+  .slide-canvas[data-theme="grid"] .accent-rule{background:#34d399;}
+  .slide-canvas[data-theme="grid"] .tagline{color:#7fb3a4;}
+  .slide-canvas[data-theme="grid"] .frame-counter{color:#7fb3a4;}
+  .slide-canvas[data-theme="grid"] .card-outline{border-color:rgba(140,200,180,.28);}
+
+  .card-outline{
+    position:absolute;
+    inset:3.5%;
+    border:1px solid rgba(157,146,214,.35);
+    border-radius:22px;
+    pointer-events:none;
+    z-index:0;
+  }
+
   .frame-counter{
     position:absolute;
     bottom:8%;
@@ -265,7 +373,20 @@
     font-size:.62em;
     letter-spacing:.05em;
     opacity:.65;
+    z-index:2;
   }
+
+  /* ---- logo on slide ---- */
+  .slide-logo{
+    position:absolute;
+    object-fit:contain;
+    pointer-events:none;
+    z-index:3;
+  }
+  .slide-logo[data-pos="top-left"]{top:6%;left:9%;}
+  .slide-logo[data-pos="top-right"]{top:6%;right:9%;}
+  .slide-logo[data-pos="bottom-left"]{bottom:8%;left:9%;}
+  .slide-logo[data-pos="bottom-right"]{bottom:8%;right:9%;}
 
   .frame-actions{
     display:flex;
@@ -312,7 +433,16 @@
     </div>
 
     <div>
-      <label class="field-label">02 — Mode pemecah slide</label>
+      <label class="field-label">02 — Mode hasil</label>
+      <div class="segmented" id="renderMode">
+        <button data-render="text" class="active">Teks jadi slide</button>
+        <button data-render="visual">Desain asli</button>
+      </div>
+      <div class="hint" id="renderHint">Ambil teks artikel dan tata ulang pakai template + tema di bawah.</div>
+    </div>
+
+    <div class="section" id="sectionSplit">
+      <label class="field-label">03 — Mode pemecah slide</label>
       <div class="segmented" id="splitMode">
         <button data-mode="heading" class="active">Per sub-judul</button>
         <button data-mode="chars">Per jumlah karakter</button>
@@ -325,7 +455,7 @@
     </div>
 
     <div>
-      <label class="field-label">03 — Rasio slide</label>
+      <label class="field-label">04 — Rasio slide</label>
       <div class="segmented" id="aspectMode">
         <button data-aspect="square" class="active">1:1</button>
         <button data-aspect="portrait">4:5</button>
@@ -333,12 +463,51 @@
       </div>
     </div>
 
-    <div>
-      <label class="field-label">04 — Gaya warna</label>
+    <div class="section" id="sectionTheme">
+      <label class="field-label">05 — Gaya warna</label>
       <div class="swatches" id="themeSwatches">
         <div class="swatch active" data-theme="paper" style="background:var(--paper);border-color:var(--amber);"><span style="color:var(--ink);">Paper</span></div>
         <div class="swatch" data-theme="ink" style="background:var(--ink);"><span style="color:var(--cream);">Ink</span></div>
         <div class="swatch" data-theme="rust" style="background:var(--rust);"><span style="color:var(--paper);">Rust</span></div>
+        <div class="swatch" data-theme="nebula" style="background:linear-gradient(135deg,#2a1c5e,#120d2e);"><span style="color:#34d399;">Nebula</span></div>
+        <div class="swatch" data-theme="grid" style="background:radial-gradient(circle at 50% 0,#0e2a2b,#040b10);"><span style="color:#34d399;">Grid</span></div>
+      </div>
+    </div>
+
+    <div>
+      <label class="field-label">06 — Logo (opsional)</label>
+      <button class="ghost-btn" id="logoBtn" style="width:100%;">Unggah logo (PNG / JPG / SVG)</button>
+      <input type="file" id="logoInput" accept="image/png,image/jpeg,image/svg+xml,image/webp,image/*" style="display:none;">
+      <div class="logo-preview" id="logoPreview">
+        <img id="logoThumb" alt="logo">
+        <span class="logo-name" id="logoName"></span>
+        <button class="logo-remove" id="logoRemove">Hapus</button>
+      </div>
+
+      <div class="logo-opts" id="logoOpts">
+        <div>
+          <div class="hint" style="margin:0 0 6px;color:var(--amber);">Posisi</div>
+          <div class="segmented" id="logoPos">
+            <button data-pos="top-left">Kiri atas</button>
+            <button data-pos="top-right" class="active">Kanan atas</button>
+            <button data-pos="bottom-left">Kiri bawah</button>
+            <button data-pos="bottom-right">Kanan bawah</button>
+          </div>
+        </div>
+        <div>
+          <div class="hint" style="margin:0 0 6px;color:var(--amber);">Ukuran</div>
+          <div class="slider-row">
+            <input type="range" id="logoSize" min="6" max="40" step="1" value="16">
+            <span class="charcount" id="logoSizeVal">16%</span>
+          </div>
+        </div>
+        <div>
+          <div class="hint" style="margin:0 0 6px;color:var(--amber);">Tampil di</div>
+          <div class="segmented" id="logoScope">
+            <button data-scope="all" class="active">Semua slide</button>
+            <button data-scope="cover">Sampul saja</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -362,17 +531,30 @@
 
 <script>
 const state = {
+  renderMode: 'text', // 'text' | 'visual'
   mode: 'heading',
   charLimit: 380,
   aspect: 'square',
   theme: 'paper',
-  slides: []
+  slides: [],          // text mode
+  visualSlides: [],    // visual mode (array of dataURL PNG)
+  logo: null,          // data URL gambar logo
+  logoPos: 'top-right',
+  logoSize: 16,        // persen dari lebar slide
+  logoScope: 'all'     // 'all' | 'cover'
 };
 
+// dimensi pratinjau (px di layar)
 const ASPECTS = {
-  square:  {w:340, h:340, real:1080},
-  portrait:{w:300, h:375, real:1080},
-  story:   {w:230, h:409, real:1080}
+  square:  {w:340, h:340},
+  portrait:{w:300, h:375},
+  story:   {w:230, h:409}
+};
+// dimensi ekspor asli (px)
+const REAL = {
+  square:  {w:1080, h:1080},
+  portrait:{w:1080, h:1350},
+  story:   {w:1080, h:1920}
 };
 
 const SAMPLE_HTML = `<h1>Mengapa Kopi Pagi Terasa Lebih Nikmat</h1>
@@ -387,8 +569,11 @@ const SAMPLE_HTML = `<h1>Mengapa Kopi Pagi Terasa Lebih Nikmat</h1>
 <h2>Kesimpulan</h2>
 <p>Kombinasi hormon, kondisi indra, dan ritual pagi membuat kopi pertama terasa berbeda. Jadi bukan hanya perasaan semata, ada dasar biologis dan kebiasaan yang membuatnya begitu istimewa.</p>`;
 
-function escapeForCanvas(text){ return text; }
+function status(msg){ document.getElementById('statusLine').textContent = msg; }
 
+/* =========================================================
+   MODE TEKS
+   ========================================================= */
 function parseInput(raw){
   raw = raw.trim();
   const hasTags = /<[a-z][\s\S]*>/i.test(raw);
@@ -466,6 +651,17 @@ function renderSlideDOM(slide, aspect, theme){
   canvas.style.width = dims.w + 'px';
   canvas.style.height = dims.h + 'px';
 
+  if(theme === 'nebula' || theme === 'grid'){
+    if(theme === 'grid'){
+      const gridBg = document.createElement('div');
+      gridBg.className = 'grid-bg';
+      canvas.appendChild(gridBg);
+    }
+    const outline = document.createElement('div');
+    outline.className = 'card-outline';
+    canvas.appendChild(outline);
+  }
+
   const topSprocket = document.createElement('div');
   topSprocket.className = 'sprocket-row';
   canvas.appendChild(topSprocket);
@@ -508,6 +704,18 @@ function renderSlideDOM(slide, aspect, theme){
   counter.className = 'frame-counter';
   counter.textContent = String(slide.index).padStart(2,'0') + ' / ' + String(slide.total).padStart(2,'0');
   canvas.appendChild(counter);
+
+  if(state.logo && (state.logoScope === 'all' || slide.type === 'cover')){
+    const logo = document.createElement('img');
+    logo.className = 'slide-logo';
+    logo.dataset.pos = state.logoPos;
+    logo.src = state.logo;
+    logo.style.width = state.logoSize + '%';
+    logo.style.height = 'auto';
+    logo.style.maxHeight = state.logoSize + '%';
+    logo.crossOrigin = 'anonymous';
+    canvas.appendChild(logo);
+  }
 
   const bottomSprocket = document.createElement('div');
   bottomSprocket.className = 'sprocket-row';
@@ -554,11 +762,195 @@ function renderStage(){
 }
 
 async function captureSlide(canvasEl){
-  const dims = ASPECTS[state.aspect];
-  const scale = dims.real / canvasEl.offsetWidth;
+  const real = REAL[state.aspect];
+  const scale = real.w / canvasEl.offsetWidth;
   return html2canvas(canvasEl, { scale, backgroundColor: null, useCORS: true });
 }
 
+/* =========================================================
+   MODE DESAIN ASLI (render HTML apa adanya, lalu potong)
+   ========================================================= */
+function loadImg(src){
+  return new Promise((res,rej)=>{
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = ()=>res(im);
+    im.onerror = rej;
+    im.src = src;
+  });
+}
+
+async function drawLogoOnCtx(ctx, W, H, slideIndex){
+  if(!state.logo) return;
+  if(state.logoScope === 'cover' && slideIndex !== 0) return;
+  try{
+    const im = await loadImg(state.logo);
+    const w = W * state.logoSize/100;
+    const scale = w / im.width;
+    const h = im.height * scale;
+    const padX = W*0.09, padTop = H*0.06, padBot = H*0.08;
+    let x, y;
+    switch(state.logoPos){
+      case 'top-left':    x = padX;         y = padTop;        break;
+      case 'top-right':   x = W-padX-w;     y = padTop;        break;
+      case 'bottom-left': x = padX;         y = H-padBot-h;    break;
+      default:            x = W-padX-w;     y = H-padBot-h;
+    }
+    ctx.drawImage(im, x, y, w, h);
+  }catch(e){ /* logo gagal dimuat, lewati */ }
+}
+
+function waitForIframe(iframe){
+  return new Promise(resolve=>{
+    const doc = iframe.contentDocument;
+    let settled = false;
+    const finish = ()=>{ if(settled) return; settled = true; setTimeout(resolve, 200); };
+
+    const imgs = Array.from(doc.images || []);
+    let pending = imgs.filter(im=>!im.complete).length;
+    const check = ()=>{ pending--; if(pending<=0) maybeFinish(); };
+    imgs.forEach(im=>{
+      if(!im.complete){ im.addEventListener('load', check); im.addEventListener('error', check); }
+    });
+
+    let fontsDone = true;
+    try{
+      if(doc.fonts && doc.fonts.ready){ fontsDone = false; doc.fonts.ready.then(()=>{ fontsDone = true; maybeFinish(); }); }
+    }catch(e){ fontsDone = true; }
+
+    function maybeFinish(){ if(pending<=0 && fontsDone) finish(); }
+
+    maybeFinish();
+    // jaring pengaman
+    setTimeout(resolve, 5000);
+  });
+}
+
+async function generateVisual(){
+  const raw = document.getElementById('inputArticle').value;
+  if(!raw.trim()){ status('Tempel atau unggah HTML dulu ya.'); return; }
+  status('Merender desain asli...');
+
+  const dims = REAL[state.aspect];
+
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.left = '-99999px';
+  iframe.style.top = '0';
+  iframe.style.width = dims.w + 'px';
+  iframe.style.height = '100px';
+  iframe.style.border = '0';
+  iframe.setAttribute('aria-hidden','true');
+  document.body.appendChild(iframe);
+
+  const doc = iframe.contentDocument;
+  const hasHtml = /<html[\s>]/i.test(raw);
+  const html = hasHtml ? raw
+    : '<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;padding:0;}</style></head><body>' + raw + '</body></html>';
+  doc.open();
+  doc.write(html);
+  doc.close();
+
+  try{ doc.documentElement.style.width = dims.w + 'px'; }catch(e){}
+
+  await waitForIframe(iframe);
+
+  const target = doc.body;
+  const fullH = Math.max(
+    target.scrollHeight, target.offsetHeight,
+    doc.documentElement.scrollHeight, doc.documentElement.offsetHeight
+  ) || dims.h;
+
+  let big;
+  try{
+    big = await html2canvas(target, {
+      backgroundColor: null,
+      scale: 1,
+      useCORS: true,
+      width: dims.w,
+      height: fullH,
+      windowWidth: dims.w,
+      windowHeight: fullH
+    });
+  }catch(err){
+    document.body.removeChild(iframe);
+    status('Gagal merender HTML. Pastikan file self-contained (CSS inline, gambar online/base64).');
+    return;
+  }
+  document.body.removeChild(iframe);
+
+  // warna latar untuk mengisi area kosong di slide terakhir
+  let bg = '#ffffff';
+  try{
+    const c = getComputedStyle(doc.body).backgroundColor;
+    if(c && c !== 'rgba(0, 0, 0, 0)' && c !== 'transparent') bg = c;
+  }catch(e){}
+
+  const slideH = dims.h;
+  const count = Math.max(1, Math.ceil(big.height / slideH));
+  state.visualSlides = [];
+
+  for(let i=0;i<count;i++){
+    const c = document.createElement('canvas');
+    c.width = dims.w;
+    c.height = slideH;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,dims.w,slideH);
+    ctx.drawImage(big, 0, i*slideH, dims.w, slideH, 0, 0, dims.w, slideH);
+    await drawLogoOnCtx(ctx, dims.w, slideH, i);
+    state.visualSlides.push(c.toDataURL('image/png'));
+  }
+
+  renderVisualStage();
+  status(count + ' slide dibuat dari desain asli (potong otomatis).');
+}
+
+function renderVisualStage(){
+  const stage = document.getElementById('stageBody');
+  stage.innerHTML = '';
+  if(!state.visualSlides.length){
+    stage.innerHTML = '<div class="empty-state">Belum ada slide.</div>';
+    document.getElementById('downloadAllBtn').style.display = 'none';
+    return;
+  }
+  const dims = ASPECTS[state.aspect];
+  const strip = document.createElement('div');
+  strip.className = 'filmstrip';
+
+  state.visualSlides.forEach((url, i)=>{
+    const frame = document.createElement('div');
+    frame.className = 'frame';
+
+    const img = document.createElement('img');
+    img.className = 'vslide';
+    img.src = url;
+    img.style.width = dims.w + 'px';
+    img.style.height = 'auto';
+    frame.appendChild(img);
+
+    const actions = document.createElement('div');
+    actions.className = 'frame-actions';
+    const label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = i === 0 ? 'Sampul' : 'Slide ' + (i+1);
+    const btn = document.createElement('button');
+    btn.textContent = 'Unduh PNG';
+    btn.onclick = () => downloadDataUrl(url, 'slide-' + String(i+1).padStart(2,'0') + '.png');
+    actions.appendChild(label);
+    actions.appendChild(btn);
+    frame.appendChild(actions);
+
+    strip.appendChild(frame);
+  });
+
+  stage.appendChild(strip);
+  document.getElementById('downloadAllBtn').style.display = 'block';
+}
+
+/* =========================================================
+   UNDUH
+   ========================================================= */
 function triggerDownload(blob, filename){
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -570,6 +962,19 @@ function triggerDownload(blob, filename){
   URL.revokeObjectURL(url);
 }
 
+function dataUrlToBlob(dataUrl){
+  const [head, b64] = dataUrl.split(',');
+  const mime = head.match(/:(.*?);/)[1];
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], {type:mime});
+}
+
+function downloadDataUrl(dataUrl, filename){
+  triggerDownload(dataUrlToBlob(dataUrl), filename);
+}
+
 async function downloadSlide(canvasEl, i){
   const rendered = await captureSlide(canvasEl);
   rendered.toBlob(blob => {
@@ -578,30 +983,73 @@ async function downloadSlide(canvasEl, i){
 }
 
 async function downloadAll(){
-  document.getElementById('statusLine').textContent = 'Menyiapkan file ZIP...';
+  status('Menyiapkan file ZIP...');
   const zip = new JSZip();
-  for(let i=0;i<state.slides.length;i++){
-    const el = document.getElementById('slide-' + i);
-    const rendered = await captureSlide(el);
-    const dataUrl = rendered.toDataURL('image/png').split(',')[1];
-    zip.file('slide-' + String(i+1).padStart(2,'0') + '.png', dataUrl, {base64:true});
+
+  if(state.renderMode === 'visual'){
+    state.visualSlides.forEach((url, i)=>{
+      zip.file('slide-' + String(i+1).padStart(2,'0') + '.png', url.split(',')[1], {base64:true});
+    });
+  } else {
+    for(let i=0;i<state.slides.length;i++){
+      const el = document.getElementById('slide-' + i);
+      const rendered = await captureSlide(el);
+      const dataUrl = rendered.toDataURL('image/png').split(',')[1];
+      zip.file('slide-' + String(i+1).padStart(2,'0') + '.png', dataUrl, {base64:true});
+    }
   }
+
   const content = await zip.generateAsync({type:'blob'});
   triggerDownload(content, 'carousel-reel.zip');
-  document.getElementById('statusLine').textContent = state.slides.length + ' slide siap. ZIP terunduh.';
+  const n = state.renderMode === 'visual' ? state.visualSlides.length : state.slides.length;
+  status(n + ' slide siap. ZIP terunduh.');
 }
 
+/* =========================================================
+   ROUTING
+   ========================================================= */
 function generate(){
+  if(state.renderMode === 'visual'){ generateVisual(); return; }
+
   const raw = document.getElementById('inputArticle').value;
-  if(!raw.trim()){
-    document.getElementById('statusLine').textContent = 'Tempel artikel dulu ya.';
-    return;
-  }
+  if(!raw.trim()){ status('Tempel artikel dulu ya.'); return; }
   const { title, blocks } = parseInput(raw);
   state.slides = buildSlides(title, blocks, state.mode, state.charLimit);
   renderStage();
-  document.getElementById('statusLine').textContent = state.slides.length + ' slide dibuat dari artikel.';
+  status(state.slides.length + ' slide dibuat dari artikel.');
 }
+
+// panggil ulang pratinjau sesuai mode aktif
+function refresh(regenVisual){
+  if(state.renderMode === 'visual'){
+    if(state.visualSlides.length && regenVisual) generateVisual();
+  } else {
+    if(state.slides.length) renderStage();
+  }
+}
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+document.getElementById('renderMode').addEventListener('click', e=>{
+  if(e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#renderMode button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  state.renderMode = e.target.dataset.render;
+
+  const isVisual = state.renderMode === 'visual';
+  document.getElementById('sectionSplit').classList.toggle('muted', isVisual);
+  document.getElementById('sectionTheme').classList.toggle('muted', isVisual);
+  document.getElementById('renderHint').textContent = isVisual
+    ? 'Render HTML apa adanya (warna/gambar/layout dipertahankan) lalu potong otomatis sesuai rasio. Pakai file HTML self-contained.'
+    : 'Ambil teks artikel dan tata ulang pakai template + tema di bawah.';
+
+  // bersihkan pratinjau saat pindah mode
+  state.slides = [];
+  state.visualSlides = [];
+  document.getElementById('stageBody').innerHTML = '<div class="empty-state">Mode diganti. Klik "Buat slide carousel" untuk membuat pratinjau.</div>';
+  document.getElementById('downloadAllBtn').style.display = 'none';
+});
 
 document.getElementById('splitMode').addEventListener('click', e=>{
   if(e.target.tagName !== 'BUTTON') return;
@@ -615,7 +1063,7 @@ document.getElementById('aspectMode').addEventListener('click', e=>{
   document.querySelectorAll('#aspectMode button').forEach(b=>b.classList.remove('active'));
   e.target.classList.add('active');
   state.aspect = e.target.dataset.aspect;
-  if(state.slides.length) renderStage();
+  refresh(true);
 });
 
 document.getElementById('themeSwatches').addEventListener('click', e=>{
@@ -624,7 +1072,7 @@ document.getElementById('themeSwatches').addEventListener('click', e=>{
   document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
   sw.classList.add('active');
   state.theme = sw.dataset.theme;
-  if(state.slides.length) renderStage();
+  if(state.renderMode === 'text') refresh(false);
 });
 
 document.getElementById('charLimit').addEventListener('input', e=>{
@@ -644,11 +1092,9 @@ document.getElementById('fileInput').addEventListener('change', e=>{
     const hint = document.getElementById('fileNameHint');
     hint.style.display = 'block';
     hint.textContent = 'File dimuat: ' + file.name;
-    document.getElementById('statusLine').textContent = 'File "' + file.name + '" berhasil dibaca. Klik "Buat slide carousel".';
+    status('File "' + file.name + '" berhasil dibaca. Klik "Buat slide carousel".');
   };
-  reader.onerror = () => {
-    document.getElementById('statusLine').textContent = 'Gagal membaca file. Coba lagi.';
-  };
+  reader.onerror = () => status('Gagal membaca file. Coba lagi.');
   reader.readAsText(file, 'UTF-8');
   e.target.value = '';
 });
@@ -659,6 +1105,59 @@ document.getElementById('loadSample').addEventListener('click', ()=>{
 document.getElementById('clearInput').addEventListener('click', ()=>{
   document.getElementById('inputArticle').value = '';
 });
+
+/* ---- logo controls ---- */
+document.getElementById('logoBtn').addEventListener('click', ()=>{
+  document.getElementById('logoInput').click();
+});
+document.getElementById('logoInput').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){
+    status('File logo harus berupa gambar (PNG/JPG/SVG).');
+    e.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    state.logo = ev.target.result;
+    document.getElementById('logoThumb').src = state.logo;
+    document.getElementById('logoName').textContent = file.name;
+    document.getElementById('logoPreview').style.display = 'flex';
+    document.getElementById('logoOpts').style.display = 'flex';
+    status('Logo dimuat. PNG transparan paling rapi.');
+    refresh(true);
+  };
+  reader.onerror = () => status('Gagal membaca logo. Coba lagi.');
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+document.getElementById('logoRemove').addEventListener('click', ()=>{
+  state.logo = null;
+  document.getElementById('logoPreview').style.display = 'none';
+  document.getElementById('logoOpts').style.display = 'none';
+  document.getElementById('logoInput').value = '';
+  refresh(true);
+});
+document.getElementById('logoPos').addEventListener('click', e=>{
+  if(e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#logoPos button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  state.logoPos = e.target.dataset.pos;
+  refresh(true);
+});
+document.getElementById('logoScope').addEventListener('click', e=>{
+  if(e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#logoScope button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  state.logoScope = e.target.dataset.scope;
+  refresh(true);
+});
+document.getElementById('logoSize').addEventListener('input', e=>{
+  state.logoSize = parseInt(e.target.value,10);
+  document.getElementById('logoSizeVal').textContent = state.logoSize + '%';
+});
+document.getElementById('logoSize').addEventListener('change', ()=>{ refresh(true); });
 
 document.getElementById('generateBtn').addEventListener('click', generate);
 document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);
