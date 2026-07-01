@@ -8,14 +8,17 @@ Carousel Reel — alat berbasis browser untuk memecah artikel (HTML atau teks bi
 - **Dua mode hasil:**
   - **Teks jadi slide** — mengambil teks artikel dan menatanya ulang pakai template + tema bawaan
   - **Desain asli** — merender HTML apa adanya (warna, gambar, layout dipertahankan) lalu memotongnya otomatis sesuai rasio slide
-- Pecah slide otomatis per sub-judul atau per jumlah karakter (mode teks)
+- Pecah slide otomatis per sub-judul atau per jumlah karakter (mode teks). Teks di tiap slide **auto-fit** — ukuran font mengecil otomatis bila kepanjangan supaya tidak keluar dari kanvas.
 - Pilih rasio slide: 1:1, 4:5, atau 9:16 (story)
-- 5 gaya warna: Paper, Ink, Rust, **Nebula** (gradient ungu-navy dengan aksen hijau), dan **Grid** (hitam-teal gelap dengan pola grid halus & bingkai kartu, aksen hijau)
+- 8 gaya warna: Paper, Ink, Rust, **Nebula**, **Grid**, **Alert**, **Amber**, dan **Glass** (gradient warna-warni cerah + panel kaca/frosted). Tema Grid/Alert/Amber punya garis aksen tipis di tepi atas ala "radar saham".
+- Ikon **SVG dekoratif** bertema **pasar modal** (candlestick, panah bullish/bearish, timbangan valuasi, gedung bank untuk makro, globe untuk forex/USD, uang untuk rupiah/harga, persen untuk yield, kalender untuk jadwal/RUPS, dll) yang dipilih **otomatis dari isi teks** — aktif di tema Glass, Grid, Alert, Amber, dan Nebula agar visual lebih hidup dan sesuai konteks saham/investasi/trading.
 - **Upload logo** (PNG/JPG/SVG) dengan pengaturan posisi (4 sudut), ukuran, dan pilihan tampil di semua slide atau sampul saja — bekerja di kedua mode
+- **Sisipkan gambar sendiri per-slide** (mode "Teks jadi slide"): tiap slide di pratinjau punya tombol **+ Gambar** untuk mengunggah foto/chart yang tampil sebagai banner di slide itu dan ikut ter-export. Gambar bertahan saat ganti tema/rasio, tapi ter-reset bila artikel di-generate ulang.
 - Unduh per slide sebagai PNG 1080px, atau semua sekaligus dalam `.zip`
 
 ### Catatan mode "Desain asli"
 
+- Tersedia opsi **versi HP (mobile)** atau **PC (desktop)**: HP merender HTML pada lebar 430px (layout mobile), PC pada 1280px (layout desktop). Keduanya tetap diekspor pada lebar 1080px.
 - File HTML sebaiknya **self-contained**: CSS ditulis inline/di dalam `<style>`, gambar berupa URL online atau ter-embed base64. Gambar yang mengandalkan file lokal terpisah tidak akan muncul.
 - Pemotongan slide dilakukan otomatis dengan tinggi sama rata sesuai rasio, sehingga kadang bisa memotong di tengah elemen. Sesuaikan tinggi konten HTML bila perlu potongan yang lebih presisi.
 
