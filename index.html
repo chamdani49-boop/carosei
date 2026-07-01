@@ -264,6 +264,12 @@
       radial-gradient(120% 85% at 50% -8%, #0e2a2b 0%, #0a1a20 45%, #061016 78%, #040b10 100%);
     color:#E4EFEC;
   }
+  .slide-canvas[data-theme="alert"]{
+    background:
+      radial-gradient(60% 40% at 50% -4%, rgba(52,211,153,.12) 0%, rgba(52,211,153,0) 55%),
+      radial-gradient(120% 90% at 50% 0%, #0f1622 0%, #0b111b 45%, #080c14 78%, #05080e 100%);
+    color:#E6EAF2;
+  }
   /* pola grid untuk tema Grid */
   .grid-bg{
     position:absolute;
@@ -355,6 +361,17 @@
   .slide-canvas[data-theme="grid"] .tagline{color:#7fb3a4;}
   .slide-canvas[data-theme="grid"] .frame-counter{color:#7fb3a4;}
   .slide-canvas[data-theme="grid"] .card-outline{border-color:rgba(140,200,180,.28);}
+
+  /* alert theme text tints (merah/coral untuk sinyal overvalued) */
+  .slide-canvas[data-theme="alert"] .sprocket-row{display:none;}
+  .slide-canvas[data-theme="alert"] .eyebrow{color:#8b93a3;opacity:.95;}
+  .slide-canvas[data-theme="alert"] h3{color:#f26d6d;}
+  .slide-canvas[data-theme="alert"] p{color:#DDE3EC;}
+  .slide-canvas[data-theme="alert"] p.lead{color:#f26d6d;}
+  .slide-canvas[data-theme="alert"] .accent-rule{background:#f26d6d;}
+  .slide-canvas[data-theme="alert"] .tagline{color:#8b93a3;}
+  .slide-canvas[data-theme="alert"] .frame-counter{color:#8b93a3;}
+  .slide-canvas[data-theme="alert"] .card-outline{border-color:rgba(160,170,190,.24);}
 
   .card-outline{
     position:absolute;
@@ -471,6 +488,7 @@
         <div class="swatch" data-theme="rust" style="background:var(--rust);"><span style="color:var(--paper);">Rust</span></div>
         <div class="swatch" data-theme="nebula" style="background:linear-gradient(135deg,#2a1c5e,#120d2e);"><span style="color:#34d399;">Nebula</span></div>
         <div class="swatch" data-theme="grid" style="background:radial-gradient(circle at 50% 0,#0e2a2b,#040b10);"><span style="color:#34d399;">Grid</span></div>
+        <div class="swatch" data-theme="alert" style="background:radial-gradient(circle at 50% 0,#111a28,#05080e);"><span style="color:#f26d6d;">Alert</span></div>
       </div>
     </div>
 
@@ -651,8 +669,8 @@ function renderSlideDOM(slide, aspect, theme){
   canvas.style.width = dims.w + 'px';
   canvas.style.height = dims.h + 'px';
 
-  if(theme === 'nebula' || theme === 'grid'){
-    if(theme === 'grid'){
+  if(theme === 'nebula' || theme === 'grid' || theme === 'alert'){
+    if(theme === 'grid' || theme === 'alert'){
       const gridBg = document.createElement('div');
       gridBg.className = 'grid-bg';
       canvas.appendChild(gridBg);
